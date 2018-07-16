@@ -106,11 +106,13 @@
 		-d, --device koag           Kindle Oasis WiFi+3G
 		-d, --device koagb          Kindle Oasis WiFi+3G Europe
 		-d, --device koagbi         Kindle Oasis WiFi+3G International
+		-d, --device koagcn         Kindle Oasis WiFi+3G China
 		-d, --device kt3            Kindle Basic 2 (2016)
 		-d, --device kt3w           White Kindle Basic 2 (2016)
 		-d, --device koa2w8         Kindle Oasis 2 (2017) WiFi (8GB)"
 		-d, --device koa2g32        Kindle Oasis 2 (2017) WiFi+3G (32GB)"
 		-d, --device koa2w32        Kindle Oasis 2 (2017) WiFi (32GB)"
+		-d, --device koa2g32b       Kindle Oasis 2 (2017) WiFi+3G (32GB) Europe"
 		-d, --device kindle2        Alias for k2 & k2i
 		-d, --device kindledx       Alias for dx, dxi & dxg
 		-d, --device kindle3        Alias for k3w, k3g & k3gb
@@ -122,9 +124,9 @@
 		-d, --device basic          Alias for kt2 & kt2a
 		-d, --device voyage         Alias for kv, kvg, kvgb, kvgj & kvgm
 		-d, --device paperwhite3    Alias for pw3, pw3g, pw3gj, pw3gc, pw3gb, pw3gm, pw3jl, pw3w, pw3wgj, pw3wjl, pw3wgi, pw3wgib
-		-d, --device oasis          Alias for koa, koag, koagb & koagbi
+		-d, --device oasis          Alias for koa, koag, koagb, koagbi & koagcn
 		-d, --device basic2         Alias for kt3 & kt3w
-		-d, --device oasis2         Alias for koa2w8, koa2g32 & koa2w32"
+		-d, --device oasis2         Alias for koa2w8, koa2g32, koa2w32 & koa2g32b"
 		-d, --device kindle5        Alias for touch, paperwhite, paperwhite2, basic, voyage, paperwhite3, oasis, basic2 & oasis2"
 		-d, --device none           No specific device (Recovery V2 & Recovery FB02 with header rev 2 only, default).
 		-d, --device auto           The current device (Obviously, has to be run from a Kindle).
@@ -158,8 +160,10 @@
                                       FB01, FB02 = recovery; FB03 = recovery2; FC02, FD03 = ota; FC04, FD04, FL01 = ota2; SP01 = sig
 		-s, --srcrev <ulong|uint>   OTA updates only. Source revision. OTA V1 uses uint, OTA V2 uses ulong.
                                       Lowest version of device that package supports. Default is 0.
+                                      Also acccepts min for 0.
 		-t, --tgtrev <ulong|uint>   OTA & Recovery V2 updates only. Target revision. OTA V1 uses uint, OTA V2 & Recovery V2 uses ulong.
                                       Highest version of device that package supports. Default is ulong/uint max value.
+                                      Also acccepts max for the appropriate maximum value for the chosen update package type.
 		-h, --hdrrev <uint>         Recovery V2 & Recovery FB02 updates only. Header Revision. Default is 0.
 		-1, --magic1 <uint>         Recovery updates only. Magic number 1. Default is 0.
 		-2, --magic2 <uint>         Recovery updates only. Magic number 2. Default is 0.
@@ -170,6 +174,7 @@
 		-r, --crit <uchar>          OTA V2 updates only. One byte optional data expressed as a number. Default is 0.
 		-x, --meta <str>            OTA V2 updates only. An optional string to add. Multiple "--meta" options supported.
                                       Format of metastring must be: key=value
+		-X, --packaging             OTA V2 updates only. Adds PackagedWith, PackagedBy & PackagedOn metastrings, storing packaging metadata.
 		-a, --archive               Keep the intermediate archive.
 		-u, --unsigned              Build an unsigned & mangled userdata package.
 		-U, --userdata              Build an userdata package (can only be used with the sig update type).

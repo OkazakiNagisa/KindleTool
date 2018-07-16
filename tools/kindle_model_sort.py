@@ -101,7 +101,7 @@ model_tuples = [
 	('KindleOasisWiFi3G', 0x20D),					# 0GD
 	('KindleOasisWiFi3GInternational', 0x219),	# 0GR
 	('KindleOasisUnknown_0GS', 0x21A),
-	('KindleOasisUnknown_0GT', 0x21B),
+	('KindleOasisWiFi3GChina', 0x21B),				# 0GT
 	('KindleOasisWiFi3GEurope', 0x21C),				# 0GU
 	('KindleBasic2Unknown_0DU', 0x1BC),
 	('KindleBasic2', 0x269),					# 0K9
@@ -116,7 +116,7 @@ model_tuples = [
 	('KindleOasis2Unknown_0P7', 0x2E7),				# 0P7?
 	('KindleOasis2WiFi8GB', 0x2E8),					# 0P8
 	('KindleOasis2WiFi3G32GB', 0x341),				# 0S1
-	('KindleOasis2Unknown_0S2', 0x342),				# 0S2?
+	('KindleOasis2WiFi3G32GBEurope', 0x342),			# 0S2
 	('KindleOasis2Unknown_0S3', 0x343),				# 0S3?
 	('KindleOasis2Unknown_0S4', 0x344),				# 0S4?
 	('KindleOasis2Unknown_0S7', 0x347),				# 0S7?

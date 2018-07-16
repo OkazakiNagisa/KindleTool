@@ -1,101 +1,18 @@
 #! /bin/bash -e
 #
-# KindleTool cross mingw buildscript
+# KindleTool cross mingw-w64 buildscript
 #
 ##
 
-## Install/Setup CrossTool-NG
-Build_CT-NG() {
-	echo "* Building CrossTool-NG . . ."
-	echo ""
-
-	# Get out of our git tree
-	cd ../../..
-
-	# Make us a dedicated sysroot
-	mkdir -p MinGW
-	cd MinGW
-
-	mkdir -p CT-NG
-	cd CT-NG
-	hg clone http://crosstool-ng.org/hg/crosstool-ng .
-	# Bump MinGW API & RT to latest versions
-	# FIXME: Broken right now, cf. http://sourceforge.net/tracker/?func=detail&atid=102435&aid=3441135&group_id=2435
-	patch -p1 < ../../KindleTool/tools/mingw/ct-ng-mingw-vbump.patch
-	# The default versions build okay, but let's use mingw-w64 instead... (http://mingw-w64.sourceforge.net/)
-
-	./bootstrap
-	./configure --prefix=/home/niluje/Kindle/KTool_Static/MinGW/CT
-	make
-	make install
-	export PATH="${PATH}:/home/niluje/Kindle/KTool_Static/MinGW/CT/bin"
-
-	cd ..
-	mkdir -p Build_TC
-	cd Build_TC
-
-	ct-ng distclean
-	unset CFLAGS CXXFLAGS LDFLAGS
-
-	cp ../../KindleTool/tools/mingw/ct-ng_mingw_dot.config .config
-	ct-ng oldconfig
-	#ct-ng menuconfig
-
-	## Config:
-	cat << EOF
-
-	CT-NG Config Overview:
-
-	* Paths >
-	EXPERIMENTAL: [*]
-	Parallel jobs: 3
-
-	* Target >
-	Arch: x86
-	Bitness: 32-bit
-	Arch level: i686
-	CPU: i686
-	Tune: i686
-	CFLAGS: -O2 -fomit-frame-pointer -pipe
-
-	* TC >
-	Tuple's vendor: pc
-
-	* OS >
-	Target: mingw32
-	Win API: 3.17-2
-
-	* Binary >
-	Format: ELF			# Don't mind this, we really will end up with Win PE binaries ;)
-	Binutils: 2.22
-	Linkers to enable: ld
-
-	* C Compiler >
-	Type: gcc
-	Version: 4.6.3
-	Additional Lang: C++
-	Link lstdc++ statically
-	Enable GRAPHITE
-	Enable LTO
-	Opt gcc libs for size [ ]
-	Use __cxa_atexit
-	<M> sjlj
-	<M> 128-bit long doubles
-
-	* C library >
-	Type: mingw
-	MinGW RT: 3.20-2
-	Threading: win32
-
-EOF
-	##
-
-	nice ct-ng build
-}
-
-## I'd use this TC: http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/rubenvb/gcc-4.7-release/
-## but they're actually for an x86_64 Linux host, not x86, so, fallback to the automated builds on my x86 box... (Or use http://sourceforge.net/projects/mingw-w64-dgn/)
-## NOTE: Might need to symlink bcrypt.h to Bcrypt.h & windows.h to Windows.h to make libarchive happy...
+## NOTE: Getting a decent cross-toolchain is a bit of a chore...
+##       Official releases are found @ https://sourceforge.net/projects/mingw-w64/files/
+##       But currently, they only provide *native* binaries.
+##       Historically, rubenvb provided binaries for cross-toolchains, but they're now horribly outdated.
+## NOTE: Thankfully, there's http://sourceforge.net/projects/mingw-w64-dgn/ which does provide up to date binaries.
+## NOTE: Alternatively, you could use MXE (http://mxe.cc) to build one yourself,
+##       although it's currently only using GCC 5.5.0 & binutils 2.28 (but with the latest mingw-w64 release),
+##       and has a bit too much dependencies for a headless box...
+## FIXME: Might need to symlink bcrypt.h to Bcrypt.h & windows.h to Windows.h to make libarchive happy...
 
 # Make sure we're up to date
 git pull
@@ -192,7 +109,6 @@ if [[ "${USE_STABLE_NETTLE}" == "true" ]] ; then
 		cd ..
 	fi
 else
-	# Build from git to benefit from the more x86_64 friendly API changes
 	if [[ ! -d "nettle-git" ]] ; then
 		echo "* Building nettle . . ."
 		echo ""
@@ -244,25 +160,25 @@ fi
 
 # Build KT package credits
 cat > ../../CREDITS << EOF
-* kindletool.exe: KindleTool, Copyright (C) 2011-2012  Yifan Lu & Copyright (C) 2012-2016  NiLuJe, licensed under the GNU General Public License version 3+ (http://www.gnu.org/licenses/gpl.html).
+* kindletool.exe: KindleTool, Copyright (C) 2011-2012 Yifan Lu & Copyright (C) 2012-2018 NiLuJe, licensed under the GNU General Public License version 3+ (http://www.gnu.org/licenses/gpl.html).
 (https://github.com/NiLuJe/KindleTool/)
 
-  |->   zlib, Copyright (C) 1995-2014 Jean-loup Gailly and Mark Adler,
+  |->   zlib, Copyright (C) 1995-2018 Jean-loup Gailly and Mark Adler,
   |   Licensed under the zlib license (http://zlib.net/zlib_license.html)
   |   (http://zlib.net/)
   |
   |->   libarchive, Copyright (C) Tim Kientzle, licensed under the New BSD License (http://www.opensource.org/licenses/bsd-license.php)
   |   (http://libarchive.github.com/)
   |
-  |->   GMP, GNU MP Library, Copyright 1991-2014 Free Software Foundation, Inc.,
+  |->   GMP, GNU MP Library, Copyright 1991-2018 Free Software Foundation, Inc.,
   |   licensed under the GNU Lesser General Public License version 3+ (http://www.gnu.org/licenses/lgpl.html).
   |   (http://gmplib.org/)
   |
-  |->   nettle, Copyright (C) 2001-2014 Niels Möller,
+  |->   nettle, Copyright (C) 2001-2018 Niels Möller,
   |   licensed under the GNU Lesser General Public License version 2.1+ (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).
   |   (http://www.lysator.liu.se/~nisse/nettle)
   |
-  \`->   Built using MinGW-w64 and statically linked against the MinGW-w64 runtime, Copyright (C) 2009-2014 by the mingw-w64 project,
+  \`->   Built using MinGW-w64 and statically linked against the MinGW-w64 runtime, Copyright (C) 2009-2018 by the mingw-w64 project,
       Licensed mostly under the Zope Public License (ZPL) Version 2.1. (http://sourceforge.net/p/mingw-w64/code/HEAD/tree/stable/v3.x/COPYING.MinGW-w64-runtime/COPYING.MinGW-w64-runtime.txt)
       (http://mingw-w64.sourceforge.net/)
 EOF

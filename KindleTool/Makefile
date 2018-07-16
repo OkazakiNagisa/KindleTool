@@ -14,11 +14,11 @@ ASAN_CLFAGS=-O1 -march=native -fno-omit-frame-pointer -pipe -fno-optimize-siblin
 # and only happens when using the NSS compat stuff (which happened to be the default on my system...)
 
 # Kindle cross toolchain prefix
-ifeq "$(KINDLE)" "true"
+ifdef KINDLE
 	CROSS_PREFIX?=arm-kindle-linux-gnueabi-
 endif
-# MinGW cross toolchain prefix
-ifeq "$(MINGW)" "true"
+# MinGW-w64 (32bit) cross toolchain prefix
+ifdef MINGW
 	CROSS_PREFIX?=i686-w64-mingw32-
 endif
 
@@ -72,7 +72,7 @@ LIBS+=-lz
 #	LIBS+=-ltcmalloc
 #endif
 
-ifeq "$(DEBUG)" "true"
+ifdef DEBUG
 	OUT_DIR=Debug
 	# Clang doesn't support -Og...
 	ifeq "$(OSTYPE)" "Darwin"
@@ -102,14 +102,14 @@ else
 	endif
 endif
 
-ifeq "$(KINDLE)" "true"
+ifdef KINDLE
 	OUT_DIR=Kindle
 	CFLAGS?=$(K3_CFLAGS)
 	CC:=$(CROSS_PREFIX)gcc
 	STRIP:=$(CROSS_PREFIX)strip
 endif
 
-ifeq "$(MINGW)" "true"
+ifdef MINGW
 	OUT_DIR=MinGW
 	CFLAGS?=$(MINGW_CFLAGS)
 	CC:=$(CROSS_PREFIX)gcc
@@ -124,7 +124,7 @@ else
 endif
 
 # It appears that Windows is using a strange & incongruous file extension for its binaries... ;D
-ifeq "$(MINGW)" "true"
+ifdef MINGW
 	# Cygwin is smart enough to take care of it itself, so just check MinGW ;)
 	BINEXT:=.exe
 else
@@ -133,17 +133,40 @@ endif
 
 # NOTE: All the KT_ prefixed *FLAGS are stuff that we *always* want set, no matter what the user does.
 # Moar warnings!
-KT_CFLAGS+=-Wall -Wformat -Wformat-security
+KT_CFLAGS+=-Wall -Wformat=2 -Wformat-signedness -Wformat-truncation=2
 KT_CFLAGS+=-Wextra -Wunused
+KT_CFLAGS+=-Wnull-dereference
+KT_CFLAGS+=-Wuninitialized
+KT_CFLAGS+=-Wduplicated-branches -Wduplicated-cond
+KT_CFLAGS+=-Wundef
+KT_CFLAGS+=-Wbad-function-cast
+KT_CFLAGS+=-Wwrite-strings
+KT_CFLAGS+=-Wjump-misses-init
+KT_CFLAGS+=-Wlogical-op
+KT_CFLAGS+=-Wstrict-prototypes -Wold-style-definition
 KT_CFLAGS+=-Wshadow
-KT_CFLAGS+=-Wmissing-prototypes
+KT_CFLAGS+=-Wmissing-prototypes -Wmissing-declarations
+KT_CFLAGS+=-Wnested-externs
+KT_CFLAGS+=-Winline
 KT_CFLAGS+=-Wcast-qual
+# NOTE: GCC 8 introduces -Wcast-align=strict to warn regardless of the target architecture (i.e., like clang)
 KT_CFLAGS+=-Wcast-align
 KT_CFLAGS+=-Wconversion
+# Output padding info when debugging (NOTE: Clang is slightly more verbose)
+# As well as function attribute hints
+ifdef DEBUG
+	KT_CFLAGS+=-Wpadded
+	KT_CFLAGS+=-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wmissing-format-attribute
+endif
+# Annoying with our typedefs
+KT_CFLAGS+=-Wno-bad-function-cast
+# And disable some very verbose and/or annoying stuff
+KT_CFLAGS+=-Wno-jump-misses-init
+
 # libarchive is always built with large files support, do the same to avoid issues.
 KT_CPPFLAGS+=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 # Get a printf function family with GNU extensions support on MinGW...
-ifeq "$(MINGW)" "true"
+ifdef MINGW
 	# That's enough for MinGW
 	KT_CPPFLAGS+=-D_GNU_SOURCE
 	# But not for MinGW-w64...

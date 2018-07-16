@@ -1,4 +1,4 @@
-.TH KINDLETOOL 1 11/24/17 Linux KindleTool
+.TH KINDLETOOL 1 05/30/18 Linux KindleTool
 .SH NAME
 KindleTool \- creates/extracts Kindle updates and more.
 .SH SYNOPSIS
@@ -60,7 +60,7 @@ packages can support multiple devices, this parameter can then be specified mult
 .br
 .I device
 is one of
-.BR k1 ", " k2 ", " k2i ", " dx ", " dxi ", " dxg ", " k3w ", " k3g ", " k3gb ", " k4 ", " k4b ", " k5w ", " k5g ", " k5gb ", " k5u ", " pw ", " pwg ", " pwgc ", " pwgb ", " pwgj ", " pwgbr ", " pw2 ", " pw2j ", " pw2g ", " pw2gc ", " pw2gb ", " pw2gr ", " pw2gj ", " pw2il ", " pw2gbl ", " pw2gl ", " pw2gcl ", " pw2gbrl ", " kt2 ", " kt2a ", " kv ", " kvg ", " kvgb ", " kvgj ", " kvgm ", " pw3 ", " pw3g ", " pw3gj ", " pw3gc ", " pw3gb ", " pw3gm ", " pw3jl ", " pw3w ", " pw3wgj ", " pw3wjl ", " pw3wgi ", " pw3wgib ", " koa ", " koag ", " koagb ", " koagbi ", " kt3 ", " kt3w ", " koa2w8 ", " koa2g32 ", " koa2w32 ", " kindle2 ", " kindledx ", " kindle3 ", " legacy ", " kindle4 ", " touch ", " paperwhite ", " paperwhite2 ", " basic ", " voyage ", " paperwhite3 ", " oasis ", " basic2 ", " oasis2 ", " kindle5 ", " none " or " auto
+.BR k1 ", " k2 ", " k2i ", " dx ", " dxi ", " dxg ", " k3w ", " k3g ", " k3gb ", " k4 ", " k4b ", " k5w ", " k5g ", " k5gb ", " k5u ", " pw ", " pwg ", " pwgc ", " pwgb ", " pwgj ", " pwgbr ", " pw2 ", " pw2j ", " pw2g ", " pw2gc ", " pw2gb ", " pw2gr ", " pw2gj ", " pw2il ", " pw2gbl ", " pw2gl ", " pw2gcl ", " pw2gbrl ", " kt2 ", " kt2a ", " kv ", " kvg ", " kvgb ", " kvgj ", " kvgm ", " pw3 ", " pw3g ", " pw3gj ", " pw3gc ", " pw3gb ", " pw3gm ", " pw3jl ", " pw3w ", " pw3wgj ", " pw3wjl ", " pw3wgi ", " pw3wgib ", " koa ", " koag ", " koagb ", " koagbi ", " koagcn ", " kt3 ", " kt3w ", " koa2w8 ", " koa2g32 ", " koa2w32 ", " koa2g32b ", " kindle2 ", " kindledx ", " kindle3 ", " legacy ", " kindle4 ", " touch ", " paperwhite ", " paperwhite2 ", " basic ", " voyage ", " paperwhite3 ", " oasis ", " basic2 ", " oasis2 ", " kindle5 ", " none " or " auto
 .TP
 .BI \-p ", " \-\-platform " platform"
 Set the target platform.
@@ -113,6 +113,8 @@ uses
 .br
 Lowest version of device that package supports. Default is
 .IR 0 .
+.br
+Also acccepts \fBmin\fR for \fI0\fR.
 .TP
 .BR \-t ", " \-\-tgtrev " uint"
 .BR OTA " and " "Recovery V2"
@@ -127,6 +129,8 @@ uses
 Highest version of device that package supports. Default is
 .I ulong/uint max
 value.
+.br
+Also acccepts \fBmax\fR for the appropriate maximum value for the chosen update package type.
 .TP
 .BR \-h ", " \-\-hdrrev " uint"
 .BR "Recovery FB02" " and " "Recovery V2" " only."
@@ -176,6 +180,10 @@ updates only. An optional string to add. This parameter can then be specified mu
 .br
 Format of metastring must be:
 .BR key = \fIvalue
+.TP
+.BR \-X ", " \-\-packaging
+.B OTA V2
+updates only. Adds \fBPackagedWith\fR, \fBPackagedBy\fR & \fBPackagedOn\fR metastrings, storing packaging metadata.
 .TP
 .BR \-a ", " \-\-archive
 Keep the intermediate archive.
